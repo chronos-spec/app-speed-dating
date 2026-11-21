@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vingt – Liste d'attente</title>
+<meta name="description" content="On like, on ne discute pas, on se rencontre. Un speed dating à 20 entre personnes qui se sont choisies, à Paris.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: direct, chaleureux, un peu joueur — une soirée, pas une appli de plus
+   IDEA: le carton d'invitation d'une soirée parisienne, numéroté sur 20
+   PICTURE: 10 + 10 points face à face, reliés par leurs likes mutuels
+   COLOUR and TYPE: bordeaux profond, rose vif en accent, blanc rosé ; Young Serif + Instrument Sans
+   LAYOUT: invitation plein écran, 3 étapes, la promesse, le formulaire en une colonne, FAQ */
+:root{color-scheme:light dark;
+  --bg:light-dark(#fbf3f4,#1a0a10);--ink:light-dark(#2a0b16,#fbeef1);--soft:light-dark(#6b4553,#d9b9c3);
+  --wine:#6e0f2c;--wine2:#8c1a3d;--pink:#ff7a93;--line:light-dark(#ead3da,#3a1a25);--card:light-dark(#fff,#24101a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Instrument Sans",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Young Serif",Georgia,serif;font-weight:400;line-height:1.05;text-wrap:balance;margin:0}
+a{color:inherit}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+nav{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{font-family:"Young Serif",serif;font-size:26px;color:#fff;text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;border-radius:999px;
+  background:var(--pink);color:#2a0b16;font-weight:700;text-decoration:none;border:0;font-size:16px;cursor:pointer;font-family:inherit}
+.btn:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+.btn.ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 1.5px #ffffff88}
+.hero{background:radial-gradient(120% 90% at 80% 20%,var(--wine2),var(--wine) 60%,#4a0a1e);color:#fff}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(24px,4vw,56px);align-items:center;margin-top:clamp(28px,5vw,64px)}
+.hero h1{font-size:clamp(36px,5.2vw,58px)}
+.hero p.lead{font-size:clamp(18px,1.6vw,20px);color:#ffe3ea;max-width:30em;margin:20px 0 28px}
+.hero .ctas{display:flex;gap:12px;flex-wrap:wrap}
+.ticket{position:relative;background:#fff6f8;color:#2a0b16;border-radius:22px;padding:22px 22px 16px;box-shadow:0 30px 60px #2a051288}
+.ticket::before,.ticket::after{content:"";position:absolute;top:50%;width:28px;height:28px;border-radius:50%;background:var(--wine);transform:translateY(-50%)}
+.ticket::before{left:-14px}.ticket::after{right:-14px}
+.ticket .meta{display:flex;justify-content:space-between;gap:12px;font-size:14px;color:#6b4553;flex-wrap:wrap}
+.ticket .meta b{color:#2a0b16;font-size:15px}
+.fig{position:relative;min-height:300px;margin:10px 0}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.legend{display:flex;gap:18px;font-size:14px;color:#6b4553;flex-wrap:wrap;border-top:1.5px dashed #ead3da;padding-top:12px}
+.legend i{display:inline-block;width:22px;height:3px;border-radius:2px;background:var(--pink);vertical-align:middle;margin-right:6px}
+.legend i.f{background:#e3c3cd}
+h2{font-size:clamp(30px,3.6vw,42px)}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:32px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px}
+.step .n{font-family:"Young Serif",serif;font-size:44px;color:var(--wine2);line-height:1}
+:root[data-theme=dark] .step .n{color:var(--pink)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .step .n{color:var(--pink)}}
+.step h3{font-size:22px;margin:12px 0 8px}
+.step p,.soft{color:var(--soft);margin:0}
+.promise{background:var(--wine);color:#fff;text-align:center}
+.promise h2{font-size:clamp(28px,4vw,48px);max-width:18em;margin:0 auto}
+.promise p{color:#ffd6df;max-width:36em;margin:18px auto 0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,64px);align-items:start}
+form{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:clamp(20px,3vw,32px);display:grid;gap:16px}
+label{display:grid;gap:6px;font-weight:600;font-size:15px}
+input,select{font:16px "Instrument Sans",sans-serif;min-height:48px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.check{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:14px;color:var(--soft)}
+.check input{width:22px;min-height:22px;height:22px;margin-top:1px;flex:none;accent-color:var(--wine2)}
+.msg{display:none;border-radius:14px;padding:16px;background:light-dark(#ffe8ee,#3a1222);font-weight:600}
+.facts{display:grid;gap:14px;margin-top:24px}
+.facts div{display:flex;gap:14px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:14px}
+.facts b{font-family:"Young Serif",serif;font-weight:400;font-size:28px;color:var(--wine2);min-width:3.2em;white-space:nowrap}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .facts b{color:var(--pink)}}
+:root[data-theme=dark] .facts b{color:var(--pink)}
+details{border-bottom:1px solid var(--line);padding:16px 0}
+summary{cursor:pointer;font-weight:600;font-size:18px;min-height:28px}
+details p{color:var(--soft);margin:10px 0 0}
+footer{border-top:1px solid var(--line);font-size:14px;color:var(--soft)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media(max-width:900px){.steps{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:800px){.hero-grid,.two{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.row{grid-template-columns:minmax(0,1fr)}.fig{min-height:240px}nav .btn{display:none}}
+@media(prefers-reduced-motion:no-preference){.pulse{animation:p 2.6s ease-in-out infinite}@keyframes p{50%{opacity:.35}}}
+</style>
+</head>
+<body>
+
+<header class="hero band">
+  <div class="wrap">
+    <nav>
+      <a class="logo" href="#">Vingt</a>
+      <a class="btn ghost" href="#inscription">Rejoindre la liste</a>
+    </nav>
+    <div class="hero-grid">
+      <div>
+        <h1>On like. On ne discute pas. On se rencontre.</h1>
+        <p class="lead">Un speed dating à 20, à Paris, avec uniquement des personnes que vous avez choisies, et qui vous ont choisi.</p>
+        <div class="ctas">
+          <a class="btn" href="#inscription">Je veux une invitation</a>
+          <a class="btn ghost" href="#comment">Comment ça marche</a>
+        </div>
+      </div>
+      <div class="ticket" aria-label="Carton d'invitation : 10 femmes et 10 hommes reliés par leurs likes mutuels">
+        <div class="meta"><span>Invitation n° <b>01</b></span><span><b>10 + 10</b> invités</span><span>Paris</span></div>
+        <div class="fig"><svg id="graph" role="img" aria-label="Deux rangées de dix points reliées par des lignes"></svg></div>
+        <div class="legend"><span><i></i>Like mutuel</span><span><i class="f"></i>Like dans un sens</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="band" id="comment">
+  <div class="wrap">
+    <h2>Trois étapes, zéro conversation qui tourne en rond</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Vous likez</h3><p>Pendant quelques jours, vous parcourez les profils de votre soirée et en likez jusqu'à 40. Pas de messagerie.</p></div>
+      <div class="step"><div class="n">2</div><h3>On forme le groupe</h3><p>Notre algorithme réunit 10 femmes et 10 hommes qui se sont likés entre eux. Chacun y retrouve au moins 5 likes réciproques.</p></div>
+      <div class="step"><div class="n">3</div><h3>Vous vous rencontrez</h3><p>Une soirée dans un bar parisien : quelques minutes avec chaque personne, en vrai. Le reste, c'est vous.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="promise band">
+  <div class="wrap">
+    <h2>Aucun date avec quelqu'un que vous n'avez pas choisi, ou qui ne vous a pas choisi.</h2>
+    <p>Le speed dating sans la loterie. Les applis sans les semaines de messages qui ne mènent nulle part.</p>
+  </div>
+</section>
+
+<section class="band" id="inscription">
+  <div class="wrap two">
+    <div>
+      <h2>Les premières soirées arrivent</h2>
+      <p class="soft" style="margin-top:16px">Inscrivez-vous sur la liste d'attente. Nous vous écrivons quand votre soirée ouvre, avec la date, le lieu et le prix.</p>
+      <div class="facts">
+        <div><b>20</b><span>personnes par soirée, autant de femmes que d'hommes</span></div>
+        <div><b>5+</b><span>likes réciproques garantis dans votre groupe</span></div>
+        <div><b>0</b><span>message à écrire avant de se voir</span></div>
+      </div>
+    </div>
+    <form id="f" name="liste-attente" method="POST" data-netlify="true" netlify-honeypot="adresse">
+      <input type="hidden" name="form-name" value="liste-attente">
+      <p hidden><label>Ne pas remplir <input name="adresse"></label></p>
+      <label for="prenom">Prénom<input id="prenom" name="prenom" required autocomplete="given-name"></label>
+      <label for="email">Email<input id="email" name="email" type="email" required autocomplete="email"></label>
+      <div class="row">
+        <label for="genre">Vous êtes
+          <select id="genre" name="genre" required><option value="">Choisir</option><option>Une femme</option><option>Un homme</option></select>
+        </label>
+        <label for="age">Âge<input id="age" name="age" type="number" min="18" max="99" required inputmode="numeric"></label>
+      </div>
+      <label for="arr">Arrondissement ou ville
+        <input id="arr" name="arrondissement" placeholder="ex. 14e, Boulogne" required>
+      </label>
+      <label class="check"><input type="checkbox" name="age18" required> J'ai 18 ans ou plus.</label>
+      <label class="check"><input type="checkbox" name="consentement" required> J'accepte que Vingt conserve ces informations pour me contacter au sujet des soirées. Je peux demander leur suppression à tout moment.</label>
+      <button class="btn" type="submit">Rejoindre la liste d'attente</button>
+      <div class="msg" id="ok" role="status">Merci, vous êtes sur la liste. On vous écrit dès que votre soirée ouvre.</div>
+    </form>
+  </div>
+</section>
+
+<section class="band" style="padding-top:0">
+  <div class="wrap" style="max-width:820px">
+    <h2>Questions fréquentes</h2>
+    <details><summary>Pourquoi pas de messagerie ?</summary><p>Parce que la plupart des conversations en ligne n'aboutissent jamais à une rencontre. Ici, le like suffit : on se découvre en vrai.</p></details>
+    <details><summary>Et si personne ne me like ?</summary><p>Vous ne serez placé que dans un groupe où vous avez au moins 5 likes réciproques. Sinon, vous êtes prioritaire pour la soirée suivante.</p></details>
+    <details><summary>Combien ça coûte ?</summary><p>Le prix de chaque soirée est annoncé à l'ouverture des inscriptions. Une caution est demandée pour éviter les absences, et rendue si vous venez.</p></details>
+    <details><summary>Qui peut participer ?</summary><p>Les premières soirées s'adressent aux célibataires de 25 à 35 ans en Île-de-France, femmes et hommes. D'autres formats suivront.</p></details>
+  </div>
+</section>
+
+<footer class="band">
+  <div class="wrap"><span>Vingt · Paris · nom provisoire</span><span>Vos données ne sont utilisées que pour vous inviter aux soirées.</span></div>
+</footer>
+
+<script>
+{
+  const s = document.getElementById('graph');
+  // Likes fictifs pour l'illustration : paires [femme, homme, mutuel ?]
+  const links = [];
+  let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  for (let f = 0; f < 10; f++) for (let h = 0; h < 10; h++) { const r = rnd(); if (r < 0.32) links.push([f, h, r < 0.17]); }
+  const draw = () => {
+    const W = s.clientWidth, H = s.clientHeight, pad = 18, r = W < 380 ? 7 : 9;
+    const x = i => pad + r + i * (W - 2 * (pad + r)) / 9, yF = pad + r + 4, yH = H - pad - r - 4;
+    const lines = links.map(([f, h, m]) => `<line x1="${x(f)}" y1="${yF}" x2="${x(h)}" y2="${yH}" stroke="${m ? '#ff7a93' : '#e3c3cd'}" stroke-width="${m ? 2.4 : 1.2}" stroke-linecap="round"${m ? '' : ' opacity=".8"'}/>`).join('');
+    const dots = (y, c) => Array.from({length: 10}, (_, i) => `<circle cx="${x(i)}" cy="${y}" r="${r}" fill="${c}"/><circle cx="${x(i) - r / 3}" cy="${y - r / 3}" r="${r / 3}" fill="#fff" opacity=".35"/>`).join('');
+    s.innerHTML = lines + dots(yF, '#8c1a3d') + dots(yH, '#2a0b16') +
+      `<circle class="pulse" cx="${x(4)}" cy="${yF}" r="${r + 5}" fill="none" stroke="#ff7a93" stroke-width="2"/>`;
+  };
+  const ro = new ResizeObserver(draw); ro.observe(s);
+
+  const form = document.getElementById('f'), ok = document.getElementById('ok');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = form.querySelector('button'); btn.disabled = true; btn.textContent = 'Envoi…';
+    try {
+      const res = await fetch('/', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams(new FormData(form)).toString()});
+      if (!res.ok) throw new Error(res.status);
+      form.querySelectorAll('label,.row,button').forEach(el => el.style.display = 'none');
+      ok.style.display = 'block';
+    } catch (err) {
+      btn.disabled = false; btn.textContent = "Rejoindre la liste d'attente";
+      ok.style.display = 'block'; ok.textContent = "L'envoi n'a pas fonctionné. Réessayez dans un instant.";
+    }
+  });
+}
+</script>
+</body>
+</html>
