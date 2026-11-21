@@ -9,10 +9,10 @@ Python 3.10+, sans dépendance.
 
 ```bash
 # 1. Générer 200 faux profils (ou exporter les vrais likes au même format)
-python faux_profils.py --n 200 --tribus 4 --sortie likes.json
+python faux_profils.py --n 240 --segments 4 --sortie likes.json   # 40 likes, segments
 
 # 2. Former les groupes
-python groupes.py likes.json --min-mutuels 3 --sortie groupes.json
+python groupes.py likes.json --sortie groupes.json
 
 # Variante : autoriser des paires sans aucun like dans un groupe
 python groupes.py likes.json --souple
@@ -22,8 +22,8 @@ python -m unittest -v
 ```
 
 ### Règles appliquées
-- Groupes de 10 femmes + 10 hommes, chaque personne dans un seul groupe.
-- Chaque participant a au moins `--min-mutuels` matchs mutuels dans son groupe (3 par défaut).
+- Groupes de 10 femmes + 10 hommes, chaque personne dans un seul groupe, à l'intérieur de son segment (champ `segment` du profil).
+- Chaque participant a au moins `--min-mutuels` matchs mutuels dans son groupe (5 par défaut).
 - Mode strict (par défaut) : chaque paire femme/homme du groupe a au moins un like dans un sens.
 
 ### Algorithme
@@ -32,13 +32,15 @@ le groupe avec les profils qui ont le plus de likes avec l'autre côté (mutuel 
 simple = 1), puis on échange des membres avec l'extérieur tant que ça réduit les violations
 des règles et augmente le score. On recommence tant qu'on trouve un groupe valide.
 
-### Premiers résultats (200 faux profils, 20 likes chacun)
-| Cas | Strict | Souple |
-|---|---|---|
-| Une seule tribu (tout le monde like au hasard dans tout le vivier) | 0 % placés | 0–10 % |
-| 4 tribus (âge/quartier/style) | 20–40 % | 40–70 % |
-| 8 tribus | 40–50 % | 40–80 % |
+### Résultats (version 2 : 5 matchs mutuels, segments, 40 likes, mode strict)
+Les likes se font uniquement à l'intérieur d'un segment (tranche d'âge + quartier, ou soirée choisie à l'avance).
 
-Le blocage vient surtout de la règle stricte (100 paires avec au moins un like) : avec seulement 20
-likes par personne, peu de groupes la satisfont. Les leviers : regrouper les inscrits par tribu
-(âge, quartier), autoriser plus de likes, ou passer en mode souple.
+| Taille du segment | Profils plutôt homogènes | Quelques profils très populaires |
+|---|---|---|
+| 60 inscrits | 100 % placés | 100 % placés |
+| 100 inscrits | 80 % placés | 60 % placés |
+
+À retenir : des segments de 50 à 80 inscrits par soirée, avec 40 likes, permettent de placer presque tout le monde
+avec au moins 5 matchs mutuels chacun. Les non-placés sont prioritaires sur la soirée suivante.
+
+Version 1 (20 likes, sans segments, 3 matchs) : 0 à 50 % de placés seulement.

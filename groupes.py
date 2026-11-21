@@ -1,7 +1,8 @@
 """Formation des groupes de speed dating (10 femmes + 10 hommes) à partir des likes.
 
 Règles (cf. page Vision dans Notion) :
-- chaque participant a au moins `min_mutuels` matchs mutuels dans son groupe ;
+- les groupes sont formés à l'intérieur d'un segment (âge, quartier, soirée) ;
+- chaque participant a au moins `min_mutuels` (5) matchs mutuels dans son groupe ;
 - dans un groupe, chaque paire femme/homme a au moins un like dans un sens
   (personne ne rencontre quelqu'un qu'il n'a ni liké ni été liké par lui),
   sauf si `exiger_interet=False`.
@@ -29,6 +30,7 @@ class Donnees:
     femmes: list[str]
     hommes: list[str]
     likes: dict[str, set[str]]
+    segments: dict[str, str] = field(default_factory=dict)
 
     def interet(self, f: str, h: str) -> int:
         """0 = aucun like, 1 = like dans un seul sens, 2 = like mutuel."""
@@ -47,7 +49,8 @@ def charger(chemin: str) -> Donnees:
     femmes = [p["id"] for p in brut["profils"] if p["genre"] == "F"]
     hommes = [p["id"] for p in brut["profils"] if p["genre"] == "H"]
     likes = {k: set(v) for k, v in brut["likes"].items()}
-    return Donnees(femmes, hommes, likes)
+    segments = {p["id"]: str(p.get("segment", "tous")) for p in brut["profils"]}
+    return Donnees(femmes, hommes, likes, segments)
 
 
 def _score_paire(d: Donnees, f: str, h: str) -> int:
@@ -144,12 +147,9 @@ def _ameliorer(d: Donnees, g: Groupe, femmes: set[str], hommes: set[str], min_mu
     return g
 
 
-def former_groupes(d: Donnees, taille: int = 10, min_mutuels: int = 3, exiger_interet: bool = True,
-                   essais: int = 20, iterations: int = 4000, graine: int = 0
-                   ) -> tuple[list[Groupe], list[str]]:
-    """Forme autant de groupes valides que possible. Renvoie (groupes, personnes non placées)."""
-    rng = random.Random(graine)
-    femmes, hommes = set(d.femmes), set(d.hommes)
+def _former_dans(d: Donnees, femmes: set[str], hommes: set[str], taille: int, min_mutuels: int, exiger_interet: bool,
+                 essais: int, iterations: int, rng: random.Random
+                 ) -> tuple[list[Groupe], list[str]]:
     groupes: list[Groupe] = []
     while len(femmes) >= taille and len(hommes) >= taille:
         trouve = None
@@ -169,6 +169,26 @@ def former_groupes(d: Donnees, taille: int = 10, min_mutuels: int = 3, exiger_in
     return groupes, sorted(femmes | hommes)
 
 
+def former_groupes(d: Donnees, taille: int = 10, min_mutuels: int = 5, exiger_interet: bool = True,
+                   essais: int = 20, iterations: int = 4000, graine: int = 0
+                   ) -> tuple[list[Groupe], list[str]]:
+    """Forme les groupes segment par segment (âge, quartier, soirée...).
+
+    Personne n'est mis dans un groupe avec quelqu'un d'un autre segment.
+    Renvoie (groupes, personnes non placées).
+    """
+    rng = random.Random(graine)
+    seg = lambda p: d.segments.get(p, "tous")
+    groupes: list[Groupe] = []
+    reste: list[str] = []
+    for s in sorted({seg(p) for p in d.femmes + d.hommes}):
+        g, r = _former_dans(d, {f for f in d.femmes if seg(f) == s}, {h for h in d.hommes if seg(h) == s},
+                            taille, min_mutuels, exiger_interet, essais, iterations, rng)
+        groupes += g
+        reste += r
+    return groupes, sorted(reste)
+
+
 def rapport(d: Donnees, groupes: list[Groupe], non_places: list[str]) -> dict:
     sortie = {"groupes": [], "non_places": non_places}
     for n, g in enumerate(groupes, 1):
@@ -176,6 +196,7 @@ def rapport(d: Donnees, groupes: list[Groupe], non_places: list[str]) -> dict:
                 for p in g.femmes + g.hommes]
         sortie["groupes"].append({
             "numero": n,
+            "segment": d.segments.get(g.femmes[0], "tous"),
             "femmes": g.femmes,
             "hommes": g.hommes,
             "score": score_groupe(d, g),
@@ -189,14 +210,15 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("likes")
     ap.add_argument("--taille", type=int, default=10)
-    ap.add_argument("--min-mutuels", type=int, default=3)
+    ap.add_argument("--min-mutuels", type=int, default=5)
     ap.add_argument("--souple", action="store_true",
                     help="autorise des paires sans aucun like dans le groupe")
     ap.add_argument("--sortie")
+    ap.add_argument("--essais", type=int, default=20, help="tentatives par groupe (moins = plus rapide)")
     args = ap.parse_args()
 
     d = charger(args.likes)
-    groupes, non_places = former_groupes(d, args.taille, args.min_mutuels, not args.souple)
+    groupes, non_places = former_groupes(d, args.taille, args.min_mutuels, not args.souple, essais=args.essais)
     r = rapport(d, groupes, non_places)
     texte = json.dumps(r, ensure_ascii=False, indent=2)
     if args.sortie:
@@ -204,7 +226,7 @@ def main() -> None:
             fh.write(texte)
     print(f"{len(groupes)} groupe(s) formé(s), {len(non_places)} personne(s) non placée(s).")
     for g in r["groupes"]:
-        print(f"  Groupe {g['numero']} : score {g['score']}, matchs mutuels min {g['matchs_mutuels_min']}, "
+        print(f"  Groupe {g['numero']} ({g['segment']}) : score {g['score']}, matchs mutuels min {g['matchs_mutuels_min']}, "
               f"moyenne {g['matchs_mutuels_moyen']}")
 
 
