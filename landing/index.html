@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vingt – Liste d'attente</title>
+<title>Réciproque – Liste d'attente</title>
 <meta name="description" content="On like, on ne discute pas, on se rencontre. Un speed dating à 20 entre personnes qui se sont choisies, à Paris.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -56,6 +56,7 @@ h2{font-size:clamp(30px,3.6vw,42px)}
 .promise h2{font-size:clamp(28px,4vw,48px);max-width:18em;margin:0 auto}
 .promise p{color:#ffd6df;max-width:36em;margin:18px auto 0}
 .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,64px);align-items:start}
+.tally{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:clamp(12px,2vw,24px)}
 form{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:clamp(20px,3vw,32px);display:grid;gap:16px}
 label{display:grid;gap:6px;font-weight:600;font-size:15px}
 input,select{font:16px "Instrument Sans",sans-serif;min-height:48px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
@@ -84,7 +85,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 <header class="hero band">
   <div class="wrap">
     <nav>
-      <a class="logo" href="#">Vingt</a>
+      <a class="logo" href="#">Réciproque</a>
       <a class="btn ghost" href="#inscription">Rejoindre la liste</a>
     </nav>
     <div class="hero-grid">
@@ -134,25 +135,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         <div><b>0</b><span>message à écrire avant de se voir</span></div>
       </div>
     </div>
-    <form id="f" name="liste-attente" method="POST" data-netlify="true" netlify-honeypot="adresse">
-      <input type="hidden" name="form-name" value="liste-attente">
-      <p hidden><label>Ne pas remplir <input name="adresse"></label></p>
-      <label for="prenom">Prénom<input id="prenom" name="prenom" required autocomplete="given-name"></label>
-      <label for="email">Email<input id="email" name="email" type="email" required autocomplete="email"></label>
-      <div class="row">
-        <label for="genre">Vous êtes
-          <select id="genre" name="genre" required><option value="">Choisir</option><option>Une femme</option><option>Un homme</option></select>
-        </label>
-        <label for="age">Âge<input id="age" name="age" type="number" min="18" max="99" required inputmode="numeric"></label>
-      </div>
-      <label for="arr">Arrondissement ou ville
-        <input id="arr" name="arrondissement" placeholder="ex. 14e, Boulogne" required>
-      </label>
-      <label class="check"><input type="checkbox" name="age18" required> J'ai 18 ans ou plus.</label>
-      <label class="check"><input type="checkbox" name="consentement" required> J'accepte que Vingt conserve ces informations pour me contacter au sujet des soirées. Je peux demander leur suppression à tout moment.</label>
-      <button class="btn" type="submit">Rejoindre la liste d'attente</button>
-      <div class="msg" id="ok" role="status">Merci, vous êtes sur la liste. On vous écrit dès que votre soirée ouvre.</div>
-    </form>
+    <div class="tally">
+      <iframe data-tally-src="https://tally.so/embed/5XZxRd?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="620" frameborder="0" marginheight="0" marginwidth="0" title="Réciproque – Liste d'attente"></iframe>
+    </div>
   </div>
 </section>
 
@@ -167,7 +152,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 </section>
 
 <footer class="band">
-  <div class="wrap"><span>Vingt · Paris · nom provisoire</span><span>Vos données ne sont utilisées que pour vous inviter aux soirées.</span></div>
+  <div class="wrap"><span>Réciproque · Paris</span><span>Vos données ne sont utilisées que pour vous inviter aux soirées.</span></div>
 </footer>
 
 <script>
@@ -187,22 +172,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   };
   const ro = new ResizeObserver(draw); ro.observe(s);
 
-  const form = document.getElementById('f'), ok = document.getElementById('ok');
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const btn = form.querySelector('button'); btn.disabled = true; btn.textContent = 'Envoi…';
-    try {
-      const res = await fetch('/', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: new URLSearchParams(new FormData(form)).toString()});
-      if (!res.ok) throw new Error(res.status);
-      form.querySelectorAll('label,.row,button').forEach(el => el.style.display = 'none');
-      ok.style.display = 'block';
-    } catch (err) {
-      btn.disabled = false; btn.textContent = "Rejoindre la liste d'attente";
-      ok.style.display = 'block'; ok.textContent = "L'envoi n'a pas fonctionné. Réessayez dans un instant.";
-    }
-  });
 }
 </script>
+<script src="https://tally.so/widgets/embed.js" async onload="Tally.loadEmbeds()"></script>
 </body>
 </html>
